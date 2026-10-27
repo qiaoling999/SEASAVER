@@ -1,0 +1,421 @@
+<!doctype html>
+<html>
+<head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+
+
+  <link rel="stylesheet" href="css/style.css">
+</head><body>
+<title>SEA SAVER｜海洋思考與問題解決挑戰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=Fredoka:wght@500;600&display=swap">
+
+
+
+
+
+
+
+
+
+<!-- SEA SAVER 主畫面 -->
+<section class="front-screen" id="home-screen" aria-label="SEA SAVER 主畫面">
+  <div class="home-stage">
+    <img class="home-art" alt="SEA SAVER 海洋清潔冒險主視覺" src="assets/home/sea_saver_home.png">
+    <button class="home-hit home-start" id="home-start" type="button" aria-label="START，開始遊戲">START</button>
+    <button class="home-hit home-how" id="home-how" type="button" aria-label="如何遊玩">如何遊玩</button>
+    <button class="home-hit home-teacher" id="home-teacher" type="button" aria-label="教師入口">教師入口</button>
+  </div>
+</section>
+
+<!-- SEA SAVER 關卡選擇 -->
+<section class="front-screen" id="level-screen" aria-label="關卡選擇" hidden>
+  <div class="level-shell">
+    <div class="level-head">
+      <button class="level-back" id="level-home" type="button">← 主畫面</button>
+      <h1>SELECT LEVEL</h1>
+      <button class="level-teacher-btn" id="level-teacher" type="button">教師入口</button>
+    </div>
+    <p class="level-sub">完成前一關，解鎖下一個任務。</p>
+    <div id="level-map"></div>
+    <p class="level-foot">SEA SAVER｜觀察・預判・執行，完成海洋任務</p>
+  </div>
+</section>
+
+<div class="wrap" id="game-screen" hidden>
+  <header class="top">
+    <div class="brand">
+      <h1>SEA SAVER</h1>
+      <label class="sr-only" for="level-select" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">選擇關卡</label>
+      <select class="lv" id="level-select" aria-label="選擇關卡">
+        <option value="1-1">Level 1-1</option>
+        <option value="1-2">Level 1-2</option>
+        <option value="1-3">Level 1-3</option>
+        <option value="1-4">Level 1-4</option>
+        <option value="1-5">Level 1-5</option>
+        <option value="2-1">Level 2-1</option>
+        <option value="2-2">Level 2-2</option>
+        <option value="2-3">Level 2-3</option>
+        <option value="2-4">Level 2-4</option>
+        <option value="2-5">Level 2-5</option>
+        <option value="3-1">Level 3-1</option>
+        <option value="3-2">Level 3-2</option>
+        <option value="3-3">Level 3-3</option>
+        <option value="3-4">Level 3-4</option>
+        <option value="3-5">Level 3-5</option>
+      </select>
+      <span class="lv level-pill" id="current-level-pill">Level 1-1</span>
+    </div>
+    <div class="top-actions">
+      <div class="more">
+        <button class="more-btn" id="more-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg>更多
+        </button>
+        <div class="more-menu" id="more-menu" role="menu" hidden>
+          <button type="button" role="menuitem" id="menu-levels">關卡選擇<small>回到闖關地圖</small></button>
+          <button type="button" role="menuitem" id="menu-tour">操作說明<small>重新看一次基本操作</small></button>
+          <button type="button" role="menuitem" id="menu-restart">重新開始本關<small id="menu-restart-sub">從 Level 1-1 第一步重新玩</small></button>
+          <button type="button" role="menuitem" id="menu-teacher">教師入口<small id="menu-teacher-sub">輸入教師碼以開啟完整關卡</small></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="game">
+    <!-- 左：主要遊戲區（地圖 → 程式） -->
+    <div class="main-col">
+    <section class="mapcard" aria-label="海洋地圖">
+      <div class="board-cols" id="board-cols" aria-hidden="true"></div>
+      <div class="shore" id="shore" aria-hidden="true"></div>
+      <div class="board-stage" id="board-stage">
+        <div class="board-rows" id="board-rows" aria-hidden="true"></div>
+        <div class="board" id="board"></div>
+      </div>
+      <div class="legend">
+
+  <span>
+    <img class="legend-img" src="assets/ship/ship.png" alt="小船">
+    小船
+  </span>
+
+  <span>
+    <img class="legend-img" src="assets/waste/bottle.png" alt="寶特瓶">
+    寶特瓶
+  </span>
+
+  <span id="legend-cup" hidden>
+    <img class="legend-img" src="assets/waste/cup.png" alt="紙飲料杯">
+    紙飲料杯
+  </span>
+
+  <span id="legend-plastic" hidden>
+    <img class="legend-img" src="assets/waste/plastic_clean.png" alt="乾淨塑膠袋">
+    乾淨塑膠袋
+  </span>
+
+  <span id="legend-plastic-dirty" hidden>
+    <img class="legend-img" src="assets/waste/plastic_dirty.png" alt="髒污塑膠袋">
+    髒污塑膠袋
+  </span>
+
+  <span id="legend-foam" hidden>
+    <img class="legend-img" src="assets/waste/foam_clean.png" alt="乾淨保麗龍">
+    乾淨保麗龍
+  </span>
+
+  <span id="legend-foam-oily" hidden>
+    <img class="legend-img" src="assets/waste/foam_dirty.png" alt="沾油保麗龍">
+    沾油保麗龍
+  </span>
+
+  <span id="legend-bag" hidden>
+    <img class="legend-img" src="assets/waste/snack_bag.png" alt="食品包裝袋">
+    食品包裝袋
+  </span>
+
+  <span>
+    <img class="legend-img" src="assets/reef/reef_large.png" alt="礁石">
+    礁石
+  </span>
+
+ <span>
+  <img
+    class="legend-img legend-port"
+    src="assets/ports/port_A.png"
+    alt="回收區"
+  >
+  回收區
+</span>
+
+<span>
+  <img
+    class="legend-img legend-port"
+    src="assets/ports/port_B.png"
+    alt="垃圾區"
+  >
+  垃圾區
+</span>
+
+</div>
+    </section>
+
+      <!-- 地圖正下方：程式編排 + RUN -->
+      <section class="prog" aria-label="程式編排區">
+        <div style="min-width:0">
+          <div class="prog-head">
+            <h2>程式編排區 <small>點手牌加入；點這裡的牌可拿回</small></h2>
+            <div class="turn-wrap">
+              <span class="turn-badge" id="turn-badge" role="status" aria-live="polite">🕒 已使用 <b id="turn-n">0</b> 回合</span>
+              <small class="turn-tip">試試看能不能用更少回合完成！</small>
+            </div>
+          </div>
+          <div class="track" id="program"></div>
+          <div id="pred-slot"></div>
+        </div>
+        <div class="actions">
+          <button class="btn run" id="btn-run" type="button">RUN</button>
+          <small class="run-cost">執行＝1 回合</small>
+          <small class="run-lock" id="run-lock" hidden>請先完成下方的『出航前預判』，或選擇『略過』，才能出航。</small>
+        </div>
+      </section>
+    </div>
+
+    <!-- 右：操作區 -->
+    <aside class="side">
+      <div class="box mission b-mission">
+        <h2>任務 <small id="mission-status">Level 1-1</small></h2>
+        <p class="student-only" id="mission-student"></p>
+        <p class="teacher-only" id="mission-teacher"></p>
+        <div class="current-banner" id="current-banner" hidden><span id="current-text">🌊 洋流方向：→ 往右（東）</span></div>
+        <details class="fold rules-fold" id="rules-fold" hidden style="margin-top:8px">
+          <summary>🌊 本關小提醒</summary>
+          <div class="fold-body">
+            <ul class="rules-list rules-short" id="rules-list"></ul>
+            <details class="rules-more" id="rules-more">
+              <summary>查看更多規則 ▾</summary>
+              <div class="rules-more-body" id="rules-more-body"></div>
+            </details>
+            <div class="teacher-only rules-full"><b>完整規則（教師參考）</b><ul class="rules-list" id="rules-full"></ul></div>
+          </div>
+        </details>
+        <details class="fold t-detail teacher-only">
+        <summary>教師詳細資訊</summary>
+        <div class="fold-body">
+        <dl class="info" id="mission-info">
+        </dl>
+        </div>
+        </details>
+      </div>
+
+      <!-- 海廢分類情報（只在設定了 guide 的關卡出現：1-4、1-5） -->
+      <details class="guide b-guide" id="guide" hidden>
+        <summary>📖 海廢分類情報</summary>
+        <div class="guide-body" id="guide-body"></div>
+      </details>
+
+      <div class="box b-hand">
+        <div class="hand-head">
+          <h2>手牌 <small id="hand-n">5 張</small></h2>
+          <div class="piles" id="piles">
+            <div class="pile" id="pile-draw" title="抽牌堆">
+              <span class="stack" id="draw-stack"><i></i><i></i><i></i></span>
+              <span class="pl"><b id="draw-n">0</b><small>抽牌堆</small></span>
+            </div>
+            <div class="pile" id="pile-discard" title="棄牌堆">
+              <span class="stack tray" id="discard-stack"></span>
+              <span class="pl"><b id="discard-n">0</b><small>棄牌堆</small><small class="last" id="discard-last">最近：—</small></span>
+            </div>
+            <span class="shuffle-toast" id="shuffle-toast" hidden>已重新洗牌</span>
+          </div>
+        </div>
+        <div class="cards" id="hand"></div>
+        <div class="hand-actions">
+          <button class="btn cancel" id="btn-cancel" type="button" hidden>取消換牌</button>
+          <button class="btn swap" id="btn-swap" type="button">換牌｜消耗 1 回合</button>
+        </div>
+      </div>
+
+      <div class="box b-cmd">
+        <h2>常駐指令 <small>隨時可用</small></h2>
+        <div class="fixed">
+          <button type="button" class="cmd" id="cmd-pickup" data-cmd="pickup"><svg viewBox="0 0 40 40"><use href="#i-pick"/></svg><span>拾取<small id="cmd-pickup-sub">拾取船右邊相鄰格的海廢</small></span></button>
+          <button type="button" class="cmd" id="cmd-unload" data-cmd="unload"><svg viewBox="0 0 40 40"><use href="#i-drop"/></svg><span>卸載<small>把貨物卸到船右邊相鄰的處理區</small></span></button>
+          <button type="button" class="cmd" id="cmd-untangle" data-cmd="untangle" hidden><svg viewBox="0 0 40 40"><use href="#i-untangle"/></svg><span>解纏<small>解開船右邊相鄰格纏在礁石上的塑膠袋</small></span></button>
+        </div>
+      </div>
+
+      <div class="box b-cargo">
+        <h2>貨艙</h2>
+        <div class="cargo">
+          <span class="slotc" aria-label="空位"></span><span class="slotc" aria-label="空位"></span>
+          <span class="n">0 / 2</span>
+        </div>
+      </div>
+
+      <span id="pred-home" hidden></span>
+      <div class="box predict pred-card" id="pred-card" hidden>
+        <h2><span id="pred-title">小預測</span> <small>可略過・不影響分數</small></h2>
+        <div id="pred-body"></div>
+        <ul class="pred-log teacher-only" id="pred-log"></ul>
+      </div>
+
+      <div class="box hint" id="hint" aria-live="polite" hidden>
+        <h2 id="hint-title">提示</h2>
+        <p id="hint-msg">小船只能撿<b>右邊格子</b>的寶特瓶喔！</p>
+        <button class="btn continue" id="btn-continue" type="button" hidden>繼續執行</button>
+        <div class="tutorial" id="hint-tutorial" hidden>
+          <b>第一個任務提示</b>
+          <p>小船不能直接開進寶特瓶那一格。<br>想一想：要怎麼讓寶特瓶出現在小船的「右邊」呢？</p>
+        </div>
+      </div>
+
+      <!-- 第三層：預設收合 -->
+      <div class="tier3">
+        <details class="fold" id="hist-panel">
+          <summary>查看執行紀錄（<span id="hist-n">0</span>）</summary>
+          <div class="fold-body"><div class="hist" id="history"></div></div>
+        </details>
+        <details class="devtools" id="devtools">
+        <summary>開發工具</summary>
+        <div class="testbar" aria-label="開發測試工具">
+          <span class="t-label">開發測試工具</span>
+          <span class="t-note">獨立測試模組：測試船以半透明虛線顯示，不會改變正式遊戲的船、牌堆、任務進度或紀錄。</span>
+          <button id="t-fwd" type="button" data-act="forward">前進</button>
+          <button id="t-back" type="button" data-act="backward">後退</button>
+          <button id="t-left" type="button" data-act="turnLeft">左轉</button>
+          <button id="t-right" type="button" data-act="turnRight">右轉</button>
+          <button id="t-reset" type="button">重設本關</button>
+          <span class="t-state" id="t-state"></span>
+          <span class="t-msg" id="t-msg" aria-live="polite"></span>
+          <span class="t-keys">展開時可用鍵盤：↑ 前進　↓ 後退　← 左轉　→ 右轉　R 重設</span>
+        </div>
+        </details>
+      </div>
+    </aside>
+
+  </main>
+</div>
+
+<!-- 操作導覽（純 UI 教學層，不改任何遊戲狀態） -->
+<div class="tour" id="tour" hidden>
+  <div class="tour-block"></div>
+  <div class="tour-spot" id="tour-spot"></div>
+  <div class="tour-pop" id="tour-pop" role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-text">
+    <div class="tour-step" id="tour-step"></div>
+    <h2 id="tour-title"></h2>
+    <p id="tour-text"></p>
+    <div class="tour-actions">
+      <button type="button" class="tour-skip" id="tour-skip">跳過</button>
+      <span class="tour-gap"></span>
+      <button type="button" class="tour-prev" id="tour-prev">上一步</button>
+      <button type="button" class="tour-next" id="tour-next">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- 任務結算 -->
+<div class="dlg-back" id="settle-dlg" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="settle-title" aria-describedby="settle-msg">
+    <h2 id="settle-title">任務完成</h2>
+    <p id="settle-msg"></p>
+    <p class="muted" id="settle-run" style="margin:-8px 0 12px"></p>
+    <p class="unlock-msg" id="settle-unlock" hidden></p>
+    <dl class="settle-stats">
+      <div><dt>完成回合</dt><dd id="stat-turns">0</dd></div>
+      <div><dt>換牌次數</dt><dd id="stat-swaps">0</dd></div>
+      <div><dt>執行指令</dt><dd id="stat-execs">0</dd></div>
+    </dl>
+    <div class="dlg-actions">
+      <button type="button" class="dlg-cancel" id="settle-levels">回到關卡選擇</button>
+      <button type="button" class="dlg-cancel" id="settle-free">繼續自由操作</button>
+      <button type="button" class="dlg-ok" id="settle-retry">再挑戰一次</button>
+    </div>
+  </div>
+</div>
+
+<!-- 重新開始本關：確認視窗 -->
+<div class="dlg-back" id="restart-dlg" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="restart-title" aria-describedby="restart-desc">
+    <h2 id="restart-title">重新開始本關</h2>
+    <p id="restart-desc">要重新開始 Level 1-1 嗎？目前的手牌、貨艙、地圖進度與本關紀錄都會重新開始。</p>
+    <div class="dlg-actions">
+      <button type="button" class="dlg-cancel" id="restart-cancel">取消</button>
+      <button type="button" class="dlg-ok" id="restart-ok">重新開始</button>
+    </div>
+  </div>
+</div>
+
+<!-- 圖示（船預設船頭朝下） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="i-ship">
+      <path d="M11 5 H29 V23 L20 36 L11 23 Z" fill="#ffffff" stroke="#17324d" stroke-width="2.4" stroke-linejoin="round"/>
+      <rect x="14.5" y="9" width="11" height="9" rx="2" fill="#ff7a59" stroke="#17324d" stroke-width="2"/>
+      <circle cx="20" cy="27" r="2.4" fill="#17324d"/>
+    </g>
+    <g id="i-bottle" transform="rotate(-25 20 20)">
+      <rect x="14" y="11" width="12" height="23" rx="4" fill="#5fc3a8" stroke="#1f6e5c" stroke-width="2"/>
+      <rect x="17" y="6" width="6" height="6" rx="1.5" fill="#2f86c9" stroke="#1f4f7a" stroke-width="1.6"/>
+      <rect x="14" y="18" width="12" height="6" fill="#ffffff" opacity=".7"/>
+    </g>
+    <g id="i-loop"><path d="M30 15 A11 11 0 1 0 31 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><path d="M24 14 L31 15 L30 8" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><text x="20" y="24" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="Fredoka,sans-serif">×2</text></g>
+    <g id="i-plastic-shape">
+      <path d="M13 13 C13 7 18 6 18 11 M27 13 C27 7 22 6 22 11" fill="none" stroke="#3d7ea6" stroke-width="2"/>
+      <path d="M10 13 H30 L28 33 Q20 36 12 33 Z" fill="#dff1fb" fill-opacity=".9" stroke="#3d7ea6" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M15 19 Q20 22 25 19" fill="none" stroke="#9cc9e3" stroke-width="1.6"/>
+    </g>
+    <g id="i-plastic"><use href="#i-plastic-shape"/></g>
+    <g id="i-plastic-dirty"><use href="#i-plastic-shape"/><circle cx="16" cy="26" r="3" fill="#8a6a3a"/><circle cx="23" cy="29" r="2.2" fill="#8a6a3a"/><circle cx="24" cy="22" r="1.6" fill="#8a6a3a"/></g>
+    <g id="i-foam-shape" transform="rotate(-8 20 20)">
+      <path d="M8 15 L20 9 L32 15 L32 27 L20 33 L8 27 Z" fill="#fbfbf7" stroke="#7c8a96" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M8 15 L20 21 L32 15 M20 21 V33" fill="none" stroke="#7c8a96" stroke-width="1.4"/>
+      <circle cx="14" cy="22" r="1" fill="#c5ccd2"/><circle cx="26" cy="24" r="1" fill="#c5ccd2"/><circle cx="20" cy="14" r="1" fill="#c5ccd2"/>
+    </g>
+    <g id="i-foam"><use href="#i-foam-shape"/></g>
+    <g id="i-foam-oily"><use href="#i-foam-shape"/><ellipse cx="15" cy="24" rx="3.6" ry="2.4" fill="#d9a441" opacity=".85"/><ellipse cx="25" cy="18" rx="2.6" ry="1.8" fill="#d9a441" opacity=".85"/></g>
+    <g id="i-cup" transform="rotate(-12 20 20)">
+      <path d="M12 12 H28 L25.5 34 H14.5 Z" fill="#fffaf0" stroke="#6b4a2b" stroke-width="1.8" stroke-linejoin="round"/>
+      <rect x="10.5" y="8.5" width="19" height="4" rx="1.5" fill="#d8c3a5" stroke="#6b4a2b" stroke-width="1.6"/>
+      <path d="M13.2 20 H26.8 L26.2 26 H13.8 Z" fill="#7fb8d6"/>
+    </g>
+    <g id="i-bag" transform="rotate(18 20 20)">
+      <path d="M11 9 l2 -3 l2 3 l2 -3 l2 3 l2 -3 l2 3 l2 -3 l2 3 V31 l-2 3 l-2 -3 l-2 3 l-2 -3 l-2 3 l-2 -3 l-2 3 l-2 -3 Z" fill="#f2a65a" stroke="#8a4b14" stroke-width="1.8" stroke-linejoin="round"/>
+      <rect x="11" y="16" width="18" height="8" fill="#fff4e0"/>
+      <circle cx="20" cy="20" r="2.6" fill="#d9534f"/>
+    </g>
+    <g id="i-reef">
+      <ellipse cx="20" cy="24" rx="16" ry="11" fill="#ffffff" opacity=".6"/>
+      <path d="M6 27 L11 15 L18 12 L22 18 L27 11 L34 18 L35 28 Z" fill="#7d7a73" stroke="#3f3d39" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 21 L17 18 M25 17 L29 20" stroke="#b8b4aa" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g id="i-fwd"><path d="M20 34 V8 M10 17 L20 7 L30 17" fill="none" stroke="#17324d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-back"><path d="M20 6 V32 M10 23 L20 33 L30 23" fill="none" stroke="#17324d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-left"><path d="M28 34 V20 Q28 12 20 12 H10 M16 6 L10 12 L16 18" fill="none" stroke="#17324d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-right"><path d="M12 34 V20 Q12 12 20 12 H30 M24 6 L30 12 L24 18" fill="none" stroke="#17324d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-pick"><path d="M8 30 H24 M24 30 V12 M18 18 L24 12 L30 18" fill="none" stroke="#1f6e5c" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33" cy="30" r="3" fill="#5fc3a8"/></g>
+    <g id="i-drop"><path d="M16 10 V28 M10 22 L16 28 L22 22" fill="none" stroke="#8f5a2f" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="24" width="12" height="9" rx="2" fill="#b37a47"/></g>
+    <g id="i-untangle"><path d="M9 28 C13 20,19 20,22 14 C24 10,29 10,32 13" fill="none" stroke="#6b5bd6" stroke-width="3.5" stroke-linecap="round"/><path d="M8 31 L14 25 M26 10 L33 17" fill="none" stroke="#4b3db0" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="3" fill="#ffb02e"/></g>
+  </defs>
+</svg>
+
+
+<!-- 教師入口：前端教師碼僅用於避免學生誤觸，並非安全驗證 -->
+<div class="dlg-back" id="teacher-dlg" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="teacher-title">
+    <h2 id="teacher-title">教師入口</h2>
+    <p>輸入教師碼後，可直接開啟所有關卡與教師資訊。</p>
+    <label for="teacher-code" style="display:block;font-weight:700;margin-bottom:6px">教師碼</label>
+    <input id="teacher-code" type="password" autocomplete="off" inputmode="text" style="width:100%;font:inherit;padding:9px 10px;border:2px solid var(--line);border-radius:10px;margin-bottom:8px">
+    <p id="teacher-error" class="teacher-error" hidden>教師碼不正確，請再試一次。</p>
+    <div class="dlg-actions">
+      <button type="button" class="dlg-cancel" id="teacher-cancel">取消</button>
+      <button type="button" class="dlg-ok" id="teacher-ok">開啟教師模式</button>
+    </div>
+  </div>
+</div>
+
+
+
+  <script src="js/levels.js"></script>
+  <script src="js/script.js"></script>
+</body></html>
